@@ -1,263 +1,158 @@
-# Phase 1: Fork & Initial Setup - Task Breakdown
+# Project Phases - Updated Progress
 
-## Overview
-Phase 1 focuses on forking Chatwoot, setting up the development environment, and preparing for customization. This phase ensures we have a working copy of Chatwoot that we can modify without affecting the original.
+## ✅ Phase 1: Fork & Initial Setup - COMPLETED!
 
-## Prerequisites Checklist
-- [ ] GitHub account with SSH keys configured
-- [ ] Hetzner server with EasyPanel installed
-- [ ] Domain name purchased and DNS configured
-- [ ] Local development machine with admin access
-- [ ] Basic knowledge of Ruby on Rails and Vue.js
+### What We Accomplished:
+- ✅ Forked Chatwoot to `github.com/adzanaco/chatwootzana`
+- ✅ Cloned repository with full codebase
+- ✅ Created `production` branch for customizations
+- ✅ Set up upstream remote for tracking
+- ✅ Created deployment documentation
+- ✅ Pushed everything to GitHub
 
-## Main Tasks
+### Current Status:
+- **Repository**: Ready at `adzanaco/chatwootzana`
+- **Branch**: `production` (for all customizations)
+- **Documentation**: Complete for EasyPanel deployment
+- **Next Step**: Deploy to EasyPanel
 
-### 1. Repository Setup
-**Priority: Critical | Time: 1-2 hours**
+---
 
-#### 1.1 Fork Chatwoot Repository
-- [ ] Go to https://github.com/chatwoot/chatwoot
-- [ ] Click "Fork" to create your own copy
-- [ ] Rename repository to your brand name
-- [ ] Set repository to private (if desired)
+## 🚀 Phase 2: EasyPanel Deployment - CURRENT
 
-#### 1.2 Clone to Local Development
+### Prerequisites Checklist
+- [x] GitHub repository ready (adzanaco/chatwootzana)
+- [x] Hetzner server with EasyPanel installed
+- [ ] Domain name configured in DNS
+- [ ] SMTP email service ready (Gmail, SendGrid, etc.)
+
+### Main Tasks for Phase 2
+
+#### 2.1 EasyPanel Setup (YOU DO THIS)
+**Time: 30 minutes**
+
+Follow `EASYPANEL_SETUP.md` step by step:
+1. [ ] Create new App service in EasyPanel
+2. [ ] Connect GitHub repository (adzanaco/chatwootzana)
+3. [ ] Select `production` branch
+4. [ ] Add PostgreSQL service
+5. [ ] Add Redis service
+6. [ ] Add Sidekiq worker service
+7. [ ] Configure environment variables
+8. [ ] Deploy!
+
+#### 2.2 Initial Testing
+**Time: 15 minutes**
+1. [ ] Access deployed URL
+2. [ ] Run database migrations (first time)
+3. [ ] Create admin account
+4. [ ] Verify basic functionality
+
+#### 2.3 Domain Configuration
+**Time: 15 minutes**
+1. [ ] Point domain to EasyPanel server
+2. [ ] Enable SSL in EasyPanel
+3. [ ] Test HTTPS access
+
+---
+
+## 🎨 Phase 3: Customization & Branding - NEXT
+
+### What We'll Do:
+1. **Replace Logos** - Add your brand logo
+2. **Change Colors** - Update color scheme
+3. **Update App Name** - Replace "Chatwoot" everywhere
+4. **Customize Emails** - Brand email templates
+5. **Add AI Toggle** - UI for AI mode
+6. **Fix Integrations** - Facebook/Instagram setup
+
+### File Locations for Customization:
+- **Logos**: `/app/javascript/dashboard/assets/images/`
+- **Colors**: `/tailwind.config.js`
+- **App Name**: `/app/javascript/dashboard/i18n/locale/en.json`
+- **Email Templates**: `/app/views/mailers/`
+- **Favicon**: `/public/favicon.ico`
+
+---
+
+## 🚀 Phase 4: Features & Integrations - FUTURE
+
+### Planned Features:
+1. **AI Integration via n8n**
+   - Webhook endpoints for AI processing
+   - Toggle switch per conversation
+   - Response handling
+
+2. **Fix Social Integrations**
+   - Facebook Messenger OAuth
+   - Instagram Business API
+   - WhatsApp Business API
+
+3. **Billing System**
+   - Stripe integration
+   - Subscription management
+   - Usage tracking
+
+4. **Multi-tenant Enhancements**
+   - Custom domains per tenant
+   - Isolated data
+   - White-label admin panel
+
+---
+
+## 📝 Important Notes
+
+### Working with Your Setup:
+1. **Always use `production` branch** for customizations
+2. **Push to GitHub** → EasyPanel auto-deploys
+3. **Keep upstream remote** for getting Chatwoot updates
+4. **Test locally first** if setting up local environment
+
+### GitHub Repository Info:
+- **Your Repo**: `github.com/adzanaco/chatwootzana`
+- **Branch for EasyPanel**: `production`
+- **Original Chatwoot**: Connected as `upstream` (for updates only)
+- **See**: `GITHUB_EXPLAINED.md` for detailed explanation
+
+### Simple Git Commands You'll Use:
 ```bash
-git clone git@github.com:YOUR_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
-git remote add upstream https://github.com/chatwoot/chatwoot.git
-git fetch upstream
-```
+# Check which branch you're on
+git branch
 
-#### 1.3 Create Development Branch
-```bash
-git checkout -b white-label-customization
-git push -u origin white-label-customization
-```
+# Make sure you're on production
+git checkout production
 
-### 2. Local Development Environment Setup
-**Priority: Critical | Time: 2-3 hours**
-
-#### 2.1 Install System Dependencies
-
-**macOS:**
-```bash
-# Install Homebrew if not installed
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install dependencies
-brew install rbenv postgresql@17 redis imagemagick node pnpm
-```
-
-**Ubuntu/Debian:**
-```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
-
-# Install dependencies
-sudo apt install -y git curl build-essential libssl-dev libreadline-dev \
-  zlib1g-dev postgresql postgresql-contrib redis-server \
-  imagemagick libpq-dev nodejs npm
-  
-# Install pnpm
-npm install -g pnpm
-```
-
-#### 2.2 Install Ruby 3.4.5
-```bash
-# Using rbenv
-rbenv install 3.4.5
-rbenv global 3.4.5
-rbenv rehash
-
-# Verify installation
-ruby -v  # Should show 3.4.5
-```
-
-#### 2.3 Install Node.js 22 LTS
-```bash
-# Using nvm (recommended)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-source ~/.bashrc  # or ~/.zshrc
-nvm install 22
-nvm use 22
-nvm alias default 22  # Set as default
-
-# Verify
-node -v  # Should show v22.x.x
-pnpm -v  # Should show 10.x.x
-```
-
-### 3. Application Setup
-**Priority: Critical | Time: 1-2 hours**
-
-#### 3.1 Install Ruby Dependencies
-```bash
-# Install bundler
-gem install bundler
-
-# Install gems
-bundle install
-
-# If you encounter issues with pg gem:
-# macOS: gem install pg -- --with-pg-config=/opt/homebrew/opt/postgresql@17/bin/pg_config
-# Linux: sudo apt-get install libpq-dev
-```
-
-#### 3.2 Install JavaScript Dependencies
-```bash
-# Install frontend dependencies
-pnpm install
-
-# Build frontend assets
-pnpm run build
-```
-
-#### 3.3 Configure Environment Variables
-```bash
-# Copy example environment file
-cp .env.example .env
-
-# Edit .env file with your configurations
-# Key variables to set:
-# - DATABASE_URL=postgres://postgres:password@localhost:5432/chatwoot_dev
-# - REDIS_URL=redis://localhost:6379
-# - FRONTEND_URL=http://localhost:3000
-# - SECRET_KEY_BASE=$(rails secret)
-```
-
-#### 3.4 Database Setup
-```bash
-# Start PostgreSQL and Redis
-# macOS:
-brew services start postgresql@17
-brew services start redis
-
-# Linux:
-sudo systemctl start postgresql
-sudo systemctl start redis
-
-# Create database and install pgvector extension
-rails db:create
-psql -d chatwoot_dev -c "CREATE EXTENSION IF NOT EXISTS vector;"
-
-# Run migrations
-rails db:migrate
-rails db:seed  # Creates sample data (optional)
-```
-
-### 4. Verify Local Installation
-**Priority: Critical | Time: 30 minutes**
-
-#### 4.1 Start Development Server
-```bash
-# Using Foreman (recommended)
-gem install foreman
-foreman start -f Procfile.dev
-
-# Or manually in separate terminals:
-# Terminal 1: Rails server
-rails server
-
-# Terminal 2: Webpack dev server
-pnpm run dev
-
-# Terminal 3: Sidekiq
-bundle exec sidekiq
-```
-
-#### 4.2 Access Application
-- [ ] Open http://localhost:3000
-- [ ] You should see Chatwoot login page
-- [ ] Create admin account if using fresh database
-- [ ] Test basic functionality:
-  - [ ] Login/logout
-  - [ ] Create inbox
-  - [ ] Send test message
-  - [ ] Check real-time updates
-
-#### 4.3 Troubleshooting Checklist
-- [ ] PostgreSQL running? `pg_isready`
-- [ ] Redis running? `redis-cli ping`
-- [ ] Port 3000 available? `lsof -i :3000`
-- [ ] Database migrated? `rails db:migrate:status`
-- [ ] Assets compiled? Check `/public/packs`
-
-### 5. EasyPanel Deployment Preparation
-**Priority: High | Time: 1-2 hours**
-
-#### 5.1 Analyze Current EasyPanel Setup
-```bash
-# SSH into Hetzner server
-ssh root@your-server-ip
-
-# Check Docker containers
-docker ps
-
-# Check EasyPanel Chatwoot template configuration
-# Document current environment variables
-# Note PostgreSQL and Redis connection details
-```
-
-#### 5.2 Prepare Docker Configuration
-- [ ] Review `docker-compose.yaml` in repository
-- [ ] Create `docker-compose.production.yaml` with:
-  - [ ] Custom image name
-  - [ ] Production environment variables
-  - [ ] Volume mappings for persistence
-  - [ ] Network configuration
-
-#### 5.3 Create Deployment Scripts
-```bash
-# Create deploy.sh
-#!/bin/bash
-echo "Building Docker image..."
-docker build -t your-brand/chatwoot:latest .
-
-echo "Pushing to registry..."
-docker push your-brand/chatwoot:latest
-
-echo "Deploying to EasyPanel..."
-# Add EasyPanel deployment commands
-```
-
-### 6. Documentation & Version Control
-**Priority: Medium | Time: 30 minutes**
-
-#### 6.1 Create Project Documentation
-- [x] CLAUDE.md - Project context for AI assistants
-- [x] TASKS.md - This file
-- [ ] README_CUSTOM.md - Your brand's README
-- [ ] DEPLOYMENT.md - Deployment instructions
-- [ ] CUSTOMIZATION.md - Track all modifications
-
-#### 6.2 Set Up Git Workflow
-```bash
-# Create .gitignore additions
-echo ".env" >> .gitignore
-echo "custom_branding/" >> .gitignore
-echo "deployment_scripts/" >> .gitignore
-
-# Commit initial setup
+# After making changes
 git add .
-git commit -m "Initial white-label setup and documentation"
-git push origin white-label-customization
+git commit -m "Description of changes"
+git push origin production
+
+# EasyPanel will auto-deploy!
 ```
 
-## Validation Checklist
-Before proceeding to Phase 2, ensure:
+## Quick Reference Checklist
 
-- [ ] **Repository**: Forked and cloned successfully
-- [ ] **Dependencies**: All system dependencies installed
-- [ ] **Ruby Environment**: Ruby 3.4.5 with all gems installed
-- [ ] **Node Environment**: Node.js 22 LTS with pnpm packages installed
-- [ ] **Database**: PostgreSQL 17.6 with pgvector extension and Redis 8.2.1 running
-- [ ] **Application**: Runs locally without errors
-- [ ] **Access**: Can login and use basic features
-- [ ] **Documentation**: CLAUDE.md and TASKS.md created with latest versions
-- [ ] **Version Control**: Changes committed to git
-- [ ] **EasyPanel**: Current setup documented
-- [ ] **Chatwoot v4**: Verified pgvector extension is installed
+### Phase 1 (✅ DONE):
+- [x] Forked to `adzanaco/chatwootzana`
+- [x] Created `production` branch
+- [x] Documentation ready
+
+### Phase 2 (NOW - EasyPanel):
+- [ ] Deploy to EasyPanel
+- [ ] Configure services
+- [ ] Test deployment
+
+### Phase 3 (NEXT - Customization):
+- [ ] Replace logos
+- [ ] Change colors
+- [ ] Update app name
+
+### Phase 4 (FUTURE - Features):
+- [ ] AI integration
+- [ ] Fix social logins
+- [ ] Add billing
+
+---
 
 ## Common Issues & Solutions
 
@@ -315,27 +210,31 @@ sudo apt-get install postgresql-17-pgvector
 psql -d chatwoot_dev -c "CREATE EXTENSION IF NOT EXISTS vector;"
 ```
 
-## Time Estimate
-- **Total Phase 1 Duration**: 6-10 hours
-- **With experience**: 3-4 hours
-- **First time setup**: 8-12 hours
+---
 
-## Next Phase Preview
-Phase 2 will focus on:
-- Replacing logos and branding elements
-- Customizing color schemes
-- Updating application name across the codebase
-- Creating a branding configuration system
-- Setting up automated build pipeline
+## Project Timeline
 
-## Notes for Future Sessions
-- Document any custom changes in CUSTOMIZATION.md
-- Keep track of environment-specific configurations
-- Test each modification in local environment first
-- Maintain backward compatibility for database migrations
-- Consider creating feature flags for new functionality
+### Completed:
+- **Phase 1**: Repository setup ✅ (Aug 25, 2025)
+
+### Current:
+- **Phase 2**: EasyPanel deployment (30-60 mins)
+
+### Upcoming:
+- **Phase 3**: Customization (2-3 hours)
+- **Phase 4**: Features (1-2 days)
 
 ---
-**Last Updated**: 2025-08-24
-**Status**: Ready for Phase 1 Execution
-**Next Review**: After Phase 1 Completion
+
+## Key Documents
+
+1. **EASYPANEL_SETUP.md** - Step-by-step deployment guide
+2. **GITHUB_EXPLAINED.md** - Understanding branches and forks
+3. **CLAUDE.md** - Project overview and technical details
+4. **TASKS.md** - This file, tracking progress
+
+---
+
+**Last Updated**: Aug 25, 2025
+**Current Phase**: 2 - EasyPanel Deployment
+**Repository**: github.com/adzanaco/chatwootzana

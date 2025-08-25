@@ -15,11 +15,15 @@ Building a white-label customer support platform based on Chatwoot (open-source)
 ### Server Setup
 - **Provider**: Hetzner (VPS/Dedicated Server)
 - **Management**: EasyPanel (Docker orchestration platform)
-- **Current Status**: Chatwoot template deployed with:
-  - PostgreSQL database
-  - Redis cache
-  - Sidekiq background jobs
-  - All configured and running
+- **Current Status**: 
+  - Original Chatwoot template running (as reference)
+  - Ready to deploy custom version from GitHub
+
+### GitHub Repository
+- **Forked Repository**: `github.com/adzanaco/chatwootzana`
+- **Working Branch**: `production` (for all customizations)
+- **Upstream Connection**: Maintained for updates from original Chatwoot
+- **Deployment**: EasyPanel will pull from GitHub and auto-deploy
 
 ### Domain & Access
 - **Custom Domain**: Will be configured (replacing Chatwoot branding)
@@ -164,24 +168,32 @@ N8N_WEBHOOK_URL=https://n8n.your-domain.com/webhook/
 N8N_API_KEY=<secure-api-key>
 ```
 
-## Development Workflow
+## Deployment Workflow
 
-### Local Setup
-1. Clone forked repository
-2. Install Ruby 3.4.5 (use rbenv or rvm)
-3. Install Node.js 22 LTS and pnpm
-4. Install PostgreSQL 17.6 and Redis 8.2.1
-5. Install pgvector extension: `CREATE EXTENSION vector;`
-6. Bundle install && pnpm install
-7. Database setup: `rails db:create db:migrate db:seed`
-8. Start: `foreman start -f Procfile.dev`
+### GitHub → EasyPanel (Current Approach)
+1. **Edit code** locally or via GitHub web
+2. **Push to GitHub** (`production` branch)
+3. **EasyPanel pulls** from GitHub
+4. **Auto-builds** Docker image
+5. **Deploys** automatically
 
-### EasyPanel Deployment
-1. Use Docker Compose configuration
-2. Configure environment variables in EasyPanel
-3. Set up persistent volumes for database and uploads
-4. Configure domain and SSL
-5. Scale Sidekiq workers as needed
+### Quick Commands:
+```bash
+# Always work on production branch
+git checkout production
+
+# After making changes
+git add .
+git commit -m "Your changes"
+git push origin production
+
+# EasyPanel auto-deploys!
+```
+
+### No Local Development Needed!
+- Use GitHub web editor for simple changes
+- EasyPanel handles all building and deployment
+- Original Chatwoot template remains as backup
 
 ## Legal & Licensing
 
@@ -249,4 +261,18 @@ N8N_API_KEY=<secure-api-key>
 - **Vue 3.6 Vapor Mode**: Experimental - reduces bundle size by 50%+
 
 ## Next Steps
-See TASKS.md for detailed Phase 1 task breakdown and implementation steps.
+
+### Immediate Action (Phase 2):
+1. Open `EASYPANEL_SETUP.md`
+2. Follow deployment steps in EasyPanel
+3. Deploy custom Chatwoot from GitHub
+
+### After Deployment (Phase 3):
+- Customize branding (logos, colors, name)
+- Add AI integration toggle
+- Fix social integrations
+
+### Key Documents:
+- **EASYPANEL_SETUP.md** - Deployment guide
+- **GITHUB_EXPLAINED.md** - Understanding Git/GitHub
+- **TASKS.md** - Project phases and progress
