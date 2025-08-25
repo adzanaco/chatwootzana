@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: chatwoot-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chatwoot_development
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - chatwoot-network
+
+  redis:
+    image: redis:8-alpine
+    container_name: chatwoot-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - chatwoot-network
+
+  chatwoot-web:
+    image: chatwoot/chatwoot:latest
+    container_name: chatwoot-web
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      POSTGRES_HOST: postgres
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DATABASE: chatwoot_development
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY_BASE: replace_with_some_random_string_here_123
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      ENABLE_ACCOUNT_SIGNUP: true
+      RAILS_LOG_TO_STDOUT: true
+      RAILS_SERVE_STATIC_FILES: true
+      ACTIVE_STORAGE_SERVICE: local
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      # Mount only the files we'll be editing for customization
+      - ./app/javascript/dashboard/assets:/app/app/javascript/dashboard/assets:cached
+      - ./app/javascript/dashboard/components:/app/app/javascript/dashboard/components:cached
+      - ./app/javascript/dashboard/i18n:/app/app/javascript/dashboard/i18n:cached
+      - ./app/javascript/widget:/app/app/javascript/widget:cached
+      - ./app/views/layouts:/app/app/views/layouts:cached
+      - ./public/brand-assets:/app/public/brand-assets:cached
+      # Storage for file uploads
+      - ./storage:/app/storage:cached
+      
+    command: >
+      sh -c "
+        bundle exec rails db:chatwoot_prepare &&
+        bundle exec rails s -p 3000 -b 0.0.0.0
+      "
+    networks:
+      - chatwoot-network
+
+  chatwoot-sidekiq:
+    image: chatwoot/chatwoot:latest
+    container_name: chatwoot-sidekiq
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      POSTGRES_HOST: postgres
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DATABASE: chatwoot_development
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY_BASE: replace_with_some_random_string_here_123
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      ENABLE_ACCOUNT_SIGNUP: true
+      RAILS_LOG_TO_STDOUT: true
+      ACTIVE_STORAGE_SERVICE: local
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      # Storage for file uploads (shared with web container)
+      - ./storage:/app/storage:cached
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    networks:
+      - chatwoot-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  chatwoot-network:
+    driver: bridge
