@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: chatwoot-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE:-chatwoot_production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - chatwoot-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8-alpine
+    container_name: chatwoot-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - chatwoot-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  chatwoot-web:
+    image: ghcr.io/adzanaco/chatwootzana:production
+    pull_policy: always
+    container_name: chatwoot-web
+    env_file: .env.production
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://redis:6379
+      INSTALLATION_ENV: docker
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      # Storage for file uploads
+      - storage_data:/app/storage
+      - public_uploads:/app/public/uploads
+      # Custom branding assets
+      - ./public/brand-assets:/app/public/brand-assets:ro
+    entrypoint: docker/entrypoints/rails.sh
+    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    networks:
+      - chatwoot-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  chatwoot-sidekiq:
+    image: ghcr.io/adzanaco/chatwootzana:production
+    pull_policy: always
+    container_name: chatwoot-sidekiq
+    env_file: .env.production
+    environment:
+      RAILS_ENV: production
+      NODE_ENV: production
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://redis:6379
+      INSTALLATION_ENV: docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      # Storage for file uploads (shared with web container)
+      - storage_data:/app/storage
+      - public_uploads:/app/public/uploads
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    networks:
+      - chatwoot-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  storage_data:
+    driver: local
+  public_uploads:
+    driver: local
+
+networks:
+  chatwoot-network:
+    driver: bridge

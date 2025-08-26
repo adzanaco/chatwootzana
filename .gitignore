@@ -29,6 +29,10 @@ master.key
 
 # Ignore env files
 .env
+.env.production
+.env.production.adzana
+.env.local
+.env.*.local
 
 public/uploads
 public/packs*
@@ -47,6 +51,12 @@ public/assets/.sprockets-manifest-*.json
 *.swp
 *.swo
 *.un~
+
+# Production setup files with sensitive data
+PRODUCTION_SETUP.md
+*_PRIVATE_KEY.txt
+*.pem
+*.key
 .jest-cache
 
 # ignore jetbrains IDE files
