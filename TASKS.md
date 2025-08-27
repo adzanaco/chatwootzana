@@ -52,19 +52,25 @@ git push origin production
 
 ## Development Workflow
 
-### Local Testing
-1. Start environment: `./start-dev.sh`
+### Local Testing (CORRECT FILES TO USE)
+1. Start environment: `./start-dev.sh` (uses docker-compose.development.yml)
 2. Make changes in mounted directories
 3. Test at ngrok URL
-4. Stop: `./stop-dev.sh`
+4. Restart web only: `./restart-dev.sh` (uses docker-compose.development.yml)
+5. Stop: `./stop-dev.sh` (uses docker-compose.development.yml)
+
+**DO NOT USE:** docker-compose.dev.yml, docker-compose.local.yml, or docker-compose.yaml directly
 
 ### Deploy to Production
 ```bash
 git add .
 git commit -m "Your changes"
 git push origin production
-# EasyPanel auto-deploys
+# GitHub Actions auto-deploys using docker-compose.production-new.yml
 ```
+
+**PRODUCTION FILE:** docker-compose.production-new.yml (on server at /opt/chatwoot/)
+**DO NOT USE:** docker-compose.production.yaml (deprecated)
 
 ## File Locations Reference
 

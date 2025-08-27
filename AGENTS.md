@@ -113,26 +113,80 @@ MAILER_SENDER_EMAIL=executive@adzana.ae
 N8N_WEBHOOK_URL=<pending-setup>
 ```
 
-## Current Development Tools
+## Important: File Structure Clarification
 
-### Local Scripts
-- `./start-dev.sh` - Start development environment
-- `./stop-dev.sh` - Stop all containers
-- `./restart-dev.sh` - Restart web service
+### Docker Compose Files
+**LOCAL DEVELOPMENT:**
+- `docker-compose.development.yml` - **PRIMARY LOCAL FILE** (used by start-dev.sh)
+- `docker-compose.yaml` - Base development compose (not directly used)
+- `docker-compose.dev.yml` - Alternative local setup (deprecated)
+- `docker-compose.local.yml` - Alternative local setup (deprecated)
+- `docker-compose.test.yaml` - Testing environment
 
-### Production Scripts (on server)
-- `/opt/chatwoot/deploy/quick-commands.sh status` - Check container status
-- `/opt/chatwoot/deploy/quick-commands.sh logs` - View live logs
-- `/opt/chatwoot/deploy/quick-commands.sh restart` - Restart services
-- `/opt/chatwoot/deploy/quick-commands.sh update` - Pull latest and redeploy
-- `/opt/chatwoot/deploy/quick-commands.sh backup` - Create database backup
+**PRODUCTION (Server):**
+- `docker-compose.production-new.yml` - **PRIMARY PRODUCTION FILE** (on server at /opt/chatwoot/)
+- `docker-compose.production.yaml` - Old production setup (deprecated)
 
-### Access
+### Shell Scripts
+**LOCAL DEVELOPMENT SCRIPTS:**
+- `./start-dev.sh` - Start dev environment (uses docker-compose.development.yml)
+- `./stop-dev.sh` - Stop all containers (uses docker-compose.development.yml)
+- `./restart-dev.sh` - Restart web service (uses docker-compose.development.yml)
+
+**OTHER LOCAL SCRIPTS (deprecated/alternative):**
+- `./quick-start.sh` - Uses docker-compose.dev.yml (deprecated)
+- `./start-docker-dev.sh` - Uses docker-compose.local.yml (deprecated)
+- `./setup-ngrok.sh` - Setup ngrok tunnel
+- `./complete-setup.sh`, `./setup-*.sh` - Initial setup scripts
+
+**PRODUCTION SCRIPTS (on server at /opt/chatwoot/deploy/):**
+- `quick-commands.sh status` - Check container status (uses docker-compose.production-new.yml)
+- `quick-commands.sh logs` - View live logs (uses docker-compose.production-new.yml)
+- `quick-commands.sh restart` - Restart services (uses docker-compose.production-new.yml)
+- `quick-commands.sh update` - Pull and redeploy (uses docker-compose.production-new.yml)
+- `quick-commands.sh backup` - Create database backup
+- `manual-deploy.sh` - Manual deployment script (uses docker-compose.production-new.yml)
+- `setup-server.sh` - Initial server setup (uses docker-compose.production-new.yml)
+- `fix-ssl-dns.sh` - Fix SSL and DNS issues
+
+### Access & Commands
 - **Production**: https://www.adzanachat.com
 - **ngrok URL**: Public access for local testing
 - **localhost:3000**: Direct local access
-- **Production logs**: `docker-compose -f docker-compose.production-new.yml logs -f`
-- **Local logs**: `docker-compose -f docker-compose.development.yml logs -f`
+
+### Correct Commands to Use
+**LOCAL DEVELOPMENT:**
+```bash
+# Start development
+./start-dev.sh
+
+# Stop development
+./stop-dev.sh
+
+# Restart web service only
+./restart-dev.sh
+
+# View logs
+docker-compose -f docker-compose.development.yml logs -f
+```
+
+**PRODUCTION (on server):**
+```bash
+# All commands from /opt/chatwoot/ directory
+cd /opt/chatwoot
+
+# View status
+docker-compose -f docker-compose.production-new.yml ps
+
+# View logs
+docker-compose -f docker-compose.production-new.yml logs -f
+
+# Restart services
+docker-compose -f docker-compose.production-new.yml restart
+
+# Or use quick commands script
+./deploy/quick-commands.sh [status|logs|restart|update|backup]
+```
 
 ## Known Issues
 
