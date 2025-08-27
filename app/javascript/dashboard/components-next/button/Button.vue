@@ -100,13 +100,13 @@ const STYLE_CONFIG = {
   colors: {
     blue: {
       solid:
-        'bg-n-brand text-white hover:enabled:brightness-110 focus-visible:brightness-110 outline-transparent',
+        'bg-[#f9a49a] text-white hover:enabled:bg-[#f9a49a]/90 focus-visible:bg-[#f9a49a]/90 outline-transparent',
       faded:
-        'bg-n-brand/10 text-n-blue-text hover:enabled:bg-n-brand/20 focus-visible:bg-n-brand/20 outline-transparent',
-      outline: 'text-n-blue-text outline-n-brand',
+        'bg-[#f9a49a]/10 text-[#f9a49a] hover:enabled:bg-[#f9a49a]/20 focus-visible:bg-[#f9a49a]/20 outline-transparent',
+      outline: 'text-[#f9a49a] outline-[#f9a49a]',
       ghost:
-        'text-n-blue-text hover:enabled:bg-n-alpha-2 focus-visible:bg-n-alpha-2 outline-transparent',
-      link: 'text-n-blue-text hover:enabled:underline focus-visible:underline outline-transparent',
+        'text-[#f9a49a] hover:enabled:bg-n-alpha-2 focus-visible:bg-n-alpha-2 outline-transparent',
+      link: 'text-[#f9a49a] hover:enabled:underline focus-visible:underline outline-transparent',
     },
     ruby: {
       solid:
