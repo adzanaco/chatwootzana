@@ -58,6 +58,8 @@ Use this approach to avoid M2 Mac build issues. GitHub builds the Docker image f
 5. Access at http://localhost:3000 or ngrok URL
 6. Stop with `./stop-github-local.sh`
 
+**Note:** This 10-minute wait for every code change can slow development. Consider using volume-mounted setup for rapid local development if you need to iterate quickly.
+
 **Scripts for GitHub Image Setup:**
 - `./start-github-local.sh` - Pulls GitHub image and starts containers (uses `docker-compose.github-local.yml`)
 - `./stop-github-local.sh` - Stops all containers
@@ -76,13 +78,26 @@ This approach mounts local directories but has issues with backend changes not r
 - Various `setup-*.sh` - Initial setup scripts (one-time use)
 
 ### Production Deployment
+
+**IMPORTANT:** The production server uses pre-built Docker images from GitHub Container Registry. There is NO Dockerfile on the server, so no local building happens.
+
+#### For Static Assets (logos, images in `/public/brand-assets/`):
+```bash
+ssh root@188.245.44.186
+cd /opt/chatwoot
+git pull origin production
+# That's it! Changes are live instantly (volume-mounted)
+```
+
+#### For Code Changes (Vue, Ruby, etc.):
 1. Push to `production` branch
-2. SSH to server: `ssh root@188.245.44.186`
-3. Manual deployment:
+2. Wait for GitHub Actions to build and push image (~10 minutes)
+3. Deploy on server:
    ```bash
+   ssh root@188.245.44.186
    cd /opt/chatwoot
    git pull origin production
-   docker build . --platform linux/x86_64
+   docker-compose -f docker-compose.production-new.yml down
    docker-compose -f docker-compose.production-new.yml up -d
    ```
 4. Accessible at https://www.adzanachat.com
@@ -140,6 +155,20 @@ MAILER_SENDER_EMAIL=executive@adzana.ae
 # Integrations
 N8N_WEBHOOK_URL=<pending-setup>
 ```
+
+## How Deployments Actually Work
+
+### Production Server Reality:
+1. **Pre-built Images**: Server pulls from `ghcr.io/adzanaco/chatwootzana:production`
+2. **No Local Building**: No Dockerfile on server, `docker build` will fail
+3. **Brand Assets**: Volume-mounted at `./public/brand-assets:/app/public/brand-assets:ro`
+   - Changes to logos/images are instant with just `git pull`
+   - No container restart needed for brand assets
+4. **Code Changes**: Require GitHub Actions to build first, then server pulls new image
+
+### What Needs Container Restart vs What Doesn't:
+- **NO restart needed**: Images/logos in `/public/brand-assets/`
+- **Restart needed**: Any code changes (Vue components, Ruby files, CSS, etc.)
 
 ## Important: File Structure Clarification
 
@@ -215,13 +244,16 @@ ssh root@188.245.44.186
 # Navigate to app
 cd /opt/chatwoot
 
-# Deploy changes
+# Deploy changes (NO docker build - server uses pre-built images!)
 git pull origin production
-docker build . --platform linux/x86_64
+docker-compose -f docker-compose.production-new.yml down
 docker-compose -f docker-compose.production-new.yml up -d
 
 # View logs
 docker-compose -f docker-compose.production-new.yml logs -f
+
+# Note: Brand assets in /public/brand-assets update instantly with git pull
+# Only code changes require container restart
 ```
 
 ## Known Issues
