@@ -47,16 +47,44 @@ Building a white-label customer support platform based on Chatwoot to sell as a 
 
 ## Development Workflow
 
-### Local Development
-1. Edit files in mounted directories
-2. Test at ngrok URL
-3. Frontend changes: Refresh browser
-4. Backend changes: Run `./restart-dev.sh`
+### CURRENT WORKING SETUP: GitHub Image-Based (Recommended)
+Use this approach to avoid M2 Mac build issues. GitHub builds the Docker image for you.
 
-### Deployment
-1. Commit changes locally
-2. Push to `production` branch
-3. GitHub Actions auto-deploys to server
+**Workflow:**
+1. Make code changes locally
+2. Commit and push to `local-testing` branch
+3. Wait for GitHub Actions to build (~10 minutes)
+4. Run `./start-github-local.sh` to pull and test
+5. Access at http://localhost:3000 or ngrok URL
+6. Stop with `./stop-github-local.sh`
+
+**Scripts for GitHub Image Setup:**
+- `./start-github-local.sh` - Pulls GitHub image and starts containers (uses `docker-compose.github-local.yml`)
+- `./stop-github-local.sh` - Stops all containers
+
+### ALTERNATIVE: Local Development with Volume Mounts (Has Issues)
+This approach mounts local directories but has issues with backend changes not reflecting.
+
+**Scripts for Volume Mount Setup:**
+- `./start-dev.sh` - Start with volume mounts (uses `docker-compose.development.yml`)
+- `./stop-dev.sh` - Stop containers
+- `./restart-dev.sh` - Restart web service only
+
+**Other deprecated/unused scripts:**
+- `./start-docker-dev.sh` - Uses `docker-compose.local.yml` (deprecated)
+- `./quick-start.sh` - Uses `docker-compose.dev.yml` (deprecated)
+- Various `setup-*.sh` - Initial setup scripts (one-time use)
+
+### Production Deployment
+1. Push to `production` branch
+2. SSH to server: `ssh root@188.245.44.186`
+3. Manual deployment:
+   ```bash
+   cd /opt/chatwoot
+   git pull origin production
+   docker build . --platform linux/x86_64
+   docker-compose -f docker-compose.production-new.yml up -d
+   ```
 4. Accessible at https://www.adzanachat.com
 
 ### Mounted Directories (Live Editing)
@@ -116,28 +144,36 @@ N8N_WEBHOOK_URL=<pending-setup>
 ## Important: File Structure Clarification
 
 ### Docker Compose Files
-**LOCAL DEVELOPMENT:**
-- `docker-compose.development.yml` - **PRIMARY LOCAL FILE** (used by start-dev.sh)
-- `docker-compose.yaml` - Base development compose (not directly used)
-- `docker-compose.dev.yml` - Alternative local setup (deprecated)
-- `docker-compose.local.yml` - Alternative local setup (deprecated)
-- `docker-compose.test.yaml` - Testing environment
+**CURRENTLY USED:**
+- `docker-compose.github-local.yml` - **PRIMARY LOCAL FILE** - Pulls from GitHub registry
+- `docker-compose.production-new.yml` - **PRODUCTION FILE** (on server at /opt/chatwoot/)
 
-**PRODUCTION (Server):**
-- `docker-compose.production-new.yml` - **PRIMARY PRODUCTION FILE** (on server at /opt/chatwoot/)
-- `docker-compose.production.yaml` - Old production setup (deprecated)
+**ALTERNATIVE/DEPRECATED:**
+- `docker-compose.development.yml` - Volume mount approach (has issues with backend changes)
+- `docker-compose.dev.yml` - Old setup (deprecated)
+- `docker-compose.local.yml` - Old setup (deprecated)
 
-### Shell Scripts
-**LOCAL DEVELOPMENT SCRIPTS:**
-- `./start-dev.sh` - Start dev environment (uses docker-compose.development.yml)
-- `./stop-dev.sh` - Stop all containers (uses docker-compose.development.yml)
-- `./restart-dev.sh` - Restart web service (uses docker-compose.development.yml)
+### Shell Scripts Breakdown
 
-**OTHER LOCAL SCRIPTS (deprecated/alternative):**
-- `./quick-start.sh` - Uses docker-compose.dev.yml (deprecated)
-- `./start-docker-dev.sh` - Uses docker-compose.local.yml (deprecated)
-- `./setup-ngrok.sh` - Setup ngrok tunnel
-- `./complete-setup.sh`, `./setup-*.sh` - Initial setup scripts
+**RECOMMENDED SCRIPTS (GitHub Image-Based):**
+- `./start-github-local.sh` - Start local env with GitHub image
+- `./stop-github-local.sh` - Stop GitHub image containers
+
+**ALTERNATIVE SCRIPTS (Volume Mount - Has Issues):**
+- `./start-dev.sh` - Start with volume mounts
+- `./stop-dev.sh` - Stop volume mount containers
+- `./restart-dev.sh` - Restart web service only
+
+**DEPRECATED/UNUSED:**
+- `./quick-start.sh` - Old setup script
+- `./start-docker-dev.sh` - Old setup script
+- `./start.sh`, `./stop.sh` - Generic scripts (not configured)
+
+**ONE-TIME SETUP SCRIPTS:**
+- `./setup-ngrok.sh` - Configure ngrok
+- `./setup-docker.sh` - Install Docker
+- `./setup-app.sh` - Initial app setup
+- `./complete-setup.sh` - Full initial setup
 
 **PRODUCTION SCRIPTS (on server at /opt/chatwoot/deploy/):**
 - `quick-commands.sh status` - Check container status (uses docker-compose.production-new.yml)
@@ -154,38 +190,38 @@ N8N_WEBHOOK_URL=<pending-setup>
 - **ngrok URL**: Public access for local testing
 - **localhost:3000**: Direct local access
 
-### Correct Commands to Use
-**LOCAL DEVELOPMENT:**
+### Quick Command Reference
+
+**RECOMMENDED LOCAL SETUP (GitHub Image):**
 ```bash
-# Start development
-./start-dev.sh
+# Start local environment
+./start-github-local.sh
 
-# Stop development
-./stop-dev.sh
-
-# Restart web service only
-./restart-dev.sh
+# Stop environment
+./stop-github-local.sh
 
 # View logs
-docker-compose -f docker-compose.development.yml logs -f
+docker-compose -f docker-compose.github-local.yml logs -f
+
+# Check status
+docker-compose -f docker-compose.github-local.yml ps
 ```
 
 **PRODUCTION (on server):**
 ```bash
-# All commands from /opt/chatwoot/ directory
+# SSH to server
+ssh root@188.245.44.186
+
+# Navigate to app
 cd /opt/chatwoot
 
-# View status
-docker-compose -f docker-compose.production-new.yml ps
+# Deploy changes
+git pull origin production
+docker build . --platform linux/x86_64
+docker-compose -f docker-compose.production-new.yml up -d
 
 # View logs
 docker-compose -f docker-compose.production-new.yml logs -f
-
-# Restart services
-docker-compose -f docker-compose.production-new.yml restart
-
-# Or use quick commands script
-./deploy/quick-commands.sh [status|logs|restart|update|backup]
 ```
 
 ## Known Issues

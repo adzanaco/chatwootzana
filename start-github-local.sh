@@ -23,10 +23,10 @@ docker-compose -f docker-compose.development.yml down 2>/dev/null || true
 docker-compose -f docker-compose.local.yml down 2>/dev/null || true
 pkill ngrok 2>/dev/null || true
 
-# Pull the latest image
+# Pull the latest image (with platform for M2 Macs)
 echo "📦 Pulling latest image from GitHub..."
 echo "   Image: ghcr.io/adzanaco/chatwootzana:local-testing"
-docker pull ghcr.io/adzanaco/chatwootzana:local-testing
+docker pull --platform linux/amd64 ghcr.io/adzanaco/chatwootzana:local-testing
 
 # Start ngrok if available
 if command -v ./ngrok &> /dev/null; then
