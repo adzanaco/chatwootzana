@@ -6,10 +6,15 @@
 - Set up local development with Docker
 - Configured ngrok for testing integrations
 
-## 🚀 Phase 2: Production Deployment - COMPLETED
+## 🚀 Phase 2: Production Deployment - COMPLETED ✅
 - Deployed to Hetzner server (188.245.44.186)
 - Accessible at https://www.adzanachat.com
 - GitHub Actions CI/CD configured
+- **Recent Updates (Sept 2025)**:
+  - ✅ Fixed deployment health check port (3000 → 3001)
+  - ✅ Updated button color hex codes (#f9a49a → #f9a94a)
+  - ✅ Verified production pipeline working correctly
+  - ✅ All containers healthy and operational
 
 ## Development Workflow
 
@@ -62,35 +67,159 @@ This workflow uses GitHub Actions to build Docker images, avoiding M2 Mac build 
 ./stop-dev.sh
 ```
 
-## 🎨 Phase 3: Customization - IN PROGRESS
+## 🎨 Phase 3: COMPLETE CHATWOOT → ADZANACHAT REBRANDING - READY TO EXECUTE
 
-### Branding Changes
-- [ ] Replace logos in `/app/javascript/dashboard/assets/images/`
-- [ ] Update color scheme in components
-- [ ] Change app name in i18n files
-- [ ] Customize email templates
-- [ ] Replace favicon
+**🔍 COMPREHENSIVE SCAN RESULTS:**
+- **1266 files** contain "Chatwoot"/"CHATWOOT"/"chatwoot" references
+- **24 files** with blue color codes (#2781F6, #1f93ff, #007bff, etc.) to change to orange
+- **5 custom AdzanaChat logos** available: `/Users/raedshuaibwork/Downloads/adzanachatlogos/`
+- **137+ logo/icon files** across PNG/SVG formats in public directories
 
-### Quick Customization Guide
+### 🎯 PHASE 3A: LOGO SYSTEM REPLACEMENT (Priority 1 - SURGICAL)
+
+**Custom AdzanaChat Logos Available:**
+- **browsertab.svg** (10,893 bytes) → Browser tab icon/favicon
+- **smallcirclelogo.svg** (10,893 bytes) → Dashboard UI, sidebar icons  
+- **logothumbnail.svg** (13,185 bytes) → Settings, profile areas, thumbnails
+- **mainlogo.svg** (29,991 bytes) → Login pages, main headers, full branding
+- **widgetlogo.svg** (12,829 bytes) → Customer chat widget, external facing
+
+**Target Locations for Logo Replacement (47 files minimum):**
+1. **Brand Assets** (Already started):
+   - ✅ `/public/brand-assets/logo_thumbnail.svg` (color changed blue→orange)
+   - ❌ `/public/brand-assets/logo.svg` (needs replacement)
+   - ❌ `/public/brand-assets/logo_dark.svg` (needs replacement)
+
+2. **Dashboard Assets** (3 files):
+   - ❌ `/app/javascript/dashboard/assets/images/bubble-logo.svg`
+   - ❌ `/app/javascript/design-system/images/logo-thumbnail.svg` 
+   - ❌ `/app/javascript/design-system/images/logo.png`
+   - ❌ `/app/javascript/design-system/images/logo-dark.png`
+
+3. **Widget Assets** (2 files):
+   - ❌ `/app/javascript/widget/assets/images/logo.svg`
+
+4. **Favicon System** (16 files in `/public/`):
+   - ❌ `favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `favicon-96x96.png`
+   - ❌ `favicon-512x512.png`, `favicon-badge-*.png` (3 files)
+
+5. **Apple Icons** (10 files in `/public/`):
+   - ❌ `apple-icon-*.png` (8 sizes), `apple-touch-icon*.png` (2 files)
+
+6. **Android Icons** (6 files in `/public/`):
+   - ❌ `android-icon-*.png` (6 sizes)
+
+7. **Microsoft Icons** (4 files in `/public/`):
+   - ❌ `ms-icon-*.png` (4 sizes)
+
+### 🎨 PHASE 3B: COLOR SYSTEM OVERHAUL (Priority 1 - SYSTEMATIC)
+
+**Primary Theme Color Change:**
+- ❌ `theme/colors.js` line 214: `brand: '#2781F6'` → `brand: '#f9a94a'`
+- ❌ `theme/colors.js` lines 18-29: Update entire `woot` color palette from blue to orange spectrum
+
+**Component Color Updates (24 files identified):**
+- ❌ Vue components with hardcoded blue colors
+- ❌ SCSS variable files in `/app/assets/stylesheets/`
+- ❌ Swagger documentation color references
+- ❌ Widget color configuration files
+- ❌ Inline SVG colors in components (like Logo.vue - partially done)
+
+### 📝 PHASE 3C: TEXT BRANDING REPLACEMENT (Priority 2 - SYSTEMATIC)
+
+**i18n Localization Files (~50 language directories):**
+- ✅ `/app/javascript/dashboard/i18n/locale/en/login.json` (already shows "AdzanaChat")
+- ❌ `/app/javascript/dashboard/i18n/locale/en/resetPassword.json` (line 4: "Chatwoot")
+- ❌ `/app/javascript/dashboard/i18n/locale/*/login.json` (~49 other languages)
+- ❌ All other i18n files containing "Chatwoot" references
+
+**Configuration & Infrastructure Files:**
+- ❌ Docker compose files with "chatwoot" in comments/labels
+- ❌ Installation config files
+- ❌ Shell scripts with hardcoded references
+- ❌ Documentation files (DEVELOPMENT_GUIDE.md, etc.)
+
+**Code References (1200+ files):**
+- ❌ Ruby class/module names containing "Chatwoot"
+- ❌ Vue component internal references
+- ❌ Test files and specs
+- ❌ Variable names and constants
+- ❌ Email template content
+- ❌ Error messages and system strings
+
+### ⚙️ PHASE 3D: VALIDATION & TESTING (Priority 3)
+
+**Build Verification Steps:**
+1. ❌ Run `npm run lint` - ensure no linting errors
+2. ❌ Run `npm run typecheck` - verify TypeScript consistency  
+3. ❌ Test GitHub Actions build pipeline
+4. ❌ Visual verification across all UI contexts
+
+### 🔧 EXECUTION STRATEGY
+
+**Order of Operations:**
+1. **Logo Replacements** (immediate visual impact, low risk)
+2. **Core Theme Colors** (broad visual consistency) 
+3. **Text Replacements** (batch process by file type)
+4. **Build & Deploy** (comprehensive testing)
+
+**Risk Mitigation:**
+- Commit each phase separately for easy rollback
+- Test build after each major change batch
+- Validate file paths exist before replacement
+- Backup original assets before replacement
+
+### 📊 CURRENT STATUS SUMMARY
+
+**Already Completed:**
+- ✅ Logo color changes in 2 files (Logo.vue, logo_thumbnail.svg)
+- ✅ Button color system using correct orange (#f9a94a)
+- ✅ Custom logo files designed and ready
+- ✅ English login form shows "AdzanaChat"
+
+**Ready to Execute:**
+- 🔄 **47+ logo file replacements** using provided AdzanaChat designs
+- 🔄 **24 color system files** blue → orange transformation
+- 🔄 **1200+ text replacements** Chatwoot → AdzanaChat
+- 🔄 **Build validation** and deployment testing
+
+**Expected Outcome:**
+- Complete visual transformation to AdzanaChat brand
+- Consistent orange color scheme (#f9a94a) throughout
+- All user-facing text changed to AdzanaChat
+- Professional, cohesive brand identity
+- Zero broken builds or missing assets
+
+### UI Development Workflow
 ```bash
-# 1. Make your changes (e.g., update logo)
-cp your-logo.png app/javascript/dashboard/assets/images/logo.png
+# Current workflow for UI changes:
 
-# 2. Commit and push to local-testing
+# 1. Make UI/styling changes locally
+# Edit Vue components, CSS, images, etc.
+
+# 2. Test changes (commit to local-testing)
 git add .
-git commit -m "Update branding"
+git commit -m "UI: describe your changes"
 git push origin local-testing
 
-# 3. Wait for GitHub Actions to build
+# 3. Wait for GitHub Actions to build image (~10 minutes)
 
-# 4. Test locally
+# 4. Test locally with built image
 ./start-github-local.sh
 
-# 5. When satisfied, push to production
+# 5. Verify changes look good, then deploy
 git checkout production
-git merge local-testing
+git merge local-testing  
 git push origin production
+
+# 6. Automatic deployment to https://www.adzanachat.com
 ```
+
+**UI Testing Notes**:
+- Frontend changes require full Docker image rebuild
+- Use local-testing branch for all UI experiments
+- Always test locally before production merge
+- GitHub Actions build time: ~10 minutes per change
 
 ## 🚀 Phase 4: Features - FUTURE
 
